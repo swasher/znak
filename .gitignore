@@ -1,0 +1,55 @@
+# Приватные файлы
+usefull_info.md
+/test
+vault_password
+/latest.dump
+registration_example_templates_from_redux_package
+test_area
+/test/
+.env
+NOTES.md
+deprecated-requirements.txt
+
+
+# Файлы, создаваемые приложением
+*.pyc
+*.log
+*.retry
+__pycache__/
+.idea/
+.vagrant/
+.fab_tasks~
+
+
+# Статика
+test/*
+/media
+
+
+.DS_Store
+node_modules
+/dist
+__pycache__/
+base.db
+/data
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+/.env
+
+/backup/
