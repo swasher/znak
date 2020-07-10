@@ -1,6 +1,7 @@
 # Приватные файлы
 usefull_info.md
 /test
+/bak
 vault_password
 /latest.dump
 registration_example_templates_from_redux_package
@@ -8,6 +9,7 @@ test_area
 /test/
 .env
 NOTES.md
+firebase_cred.html
 deprecated-requirements.txt
 
 
