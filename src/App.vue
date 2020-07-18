@@ -1,20 +1,33 @@
 <template>
   <div>
-    <nav class="navbar navbar-dark bg-dark justify-content-between flex-nowrap flex-row">
-      <div class="container">
-        <router-link class="navbar-brand float-left" to="/">ZnakDB</router-link>
-        <ul class="nav navbar-nav flex-row float-right">
-          <li class="nav-item">
-            <router-link class="nav-link pr-3" to="/upload">Upload</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link" to="/login">Login</router-link>
-          </li>
-        </ul>
-      </div>
-    </nav>
+    <b-navbar type="light" variant="warning">
+      <router-link class="navbar-brand float-left" to="/">Znak DB</router-link>
 
-    <div class="container mt-5">
+      <div>
+        <b-nav>
+          <router-link class="nav-link pr-3" to="/upload">Upload</router-link>
+          <router-link class="nav-link pr-3" to="/test">Test</router-link>
+        </b-nav>
+      </div>
+
+      <b-navbar-nav class="ml-auto">
+        <div v-if="user.loggedIn">
+          <b-nav>
+            <b-nav-item active disabled>{{ user.data.email }} are logged in.</b-nav-item>
+            <b-nav-item href="#" @click="signOut()">Logout</b-nav-item>
+          </b-nav>
+        </div>
+
+        <div v-else>
+          <b-nav>
+            <router-link class="nav-link pr-3" to="/login">Login</router-link>
+          </b-nav>
+        </div>
+      </b-navbar-nav>
+
+    </b-navbar>
+
+    <div class="container mt-3">
       <router-view></router-view>
     </div>
   </div>
@@ -22,12 +35,32 @@
 
 
 <script>
+import { mapGetters } from 'vuex';
+import { auth } from './firebase'
 
 export default {
   name: 'App',
   components: {
+  },
+  computed: {
+    // ...mapState(['user']),
+    ...mapGetters({
+      user: "user"
+    })
+  },
+  methods: {
+    signOut() {
+      console.log('Start signout')
+      auth
+        .signOut()
+        .then(() => {
+          this.$store.dispatch('logoutUser');
+          if (this.$route.name !== 'znaki') this.$router.push({name: "znaki"}).catch(() => {});
+        });
+    }
   }
 }
+
 </script>
 
 

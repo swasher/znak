@@ -1,6 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
+import 'firebase/storage'
 
 // firebase init - add your own config here
 const firebaseConfig  = {
@@ -21,6 +22,24 @@ export const db = firebase
 
 export const auth = firebase
     .auth();
+
+export const storage = firebase
+    .storage();
+
+
+// collection references
+export const usersCollection = db.collection('users')
+export const logosCollection = db.collection('logos')
+
+
+firebase.getCurrentUser = () => {
+    return new Promise((resolve, reject) => {
+            const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+                unsubscribe();
+                resolve(user);
+            }, reject);
+        }
+    )};
 
 
 // Export types that exists in Firestore
