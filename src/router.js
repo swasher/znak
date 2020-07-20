@@ -6,6 +6,7 @@ import Upload from "./components/Upload";
 import Edit from "./components/Edit";
 import Login from "./components/Login";
 import Test from "./components/Test";
+import NotFound from "./components/NotFound";
 
 
 Vue.use(VueRouter)
@@ -41,6 +42,14 @@ Vue.use(VueRouter)
     name: 'test',
     component: Test
   },
+  {
+    path: '/404',
+    name: '404',
+    component: NotFound,
+  }, {
+    path: '*',
+    redirect: '/404'
+  }
 
 ]
 

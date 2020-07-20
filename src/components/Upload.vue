@@ -2,8 +2,8 @@
     <div>
         <div>
             <p>Upload an image to Firebase:</p>
-<!--            <input type="file" @change="previewImage" accept="application/pdf">-->
-            <input type="file" @change="previewImage" accept="image/*">
+            <input type="file" @change="previewImage" accept="application/pdf">
+<!--            <input type="file" @change="previewImage" accept="image/*">-->
         </div>
         <div>
             <p>Progress: {{uploadValue.toFixed()+"%"}}
@@ -11,14 +11,15 @@
             </p>
         </div>
         <div v-if="imageData!=null">
-            <img class="preview" :src="picture">
+            <pdf :src="imageSrc" style="width: 200px"></pdf>
+<!--            <img class="preview" :src="picture">-->
             <br>
             <button @click="onUpload">Upload</button>
         </div>
 
-        <template>
-            <pdf :src="imageSrc"></pdf>
-        </template>
+<!--        <template>-->
+<!--            <pdf :src="imageSrc"></pdf>-->
+<!--        </template>-->
 
     </div>
 </template>

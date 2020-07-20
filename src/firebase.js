@@ -26,8 +26,6 @@ export const auth = firebase
 export const storage = firebase
     .storage();
 
-
-// collection references
 export const usersCollection = db.collection('users')
 export const logosCollection = db.collection('logos')
 
@@ -40,13 +38,3 @@ firebase.getCurrentUser = () => {
             }, reject);
         }
     )};
-
-
-// Export types that exists in Firestore
-// This is not always necessary, but it's used in other examples
-// const { Timestamp, GeoPoint } = firebase.firestore
-// export { Timestamp, GeoPoint }
-
-// if using Firebase JS SDK < 5.8.0
-// db.settings({ timestampsInSnapshots: true })
-

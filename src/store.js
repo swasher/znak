@@ -7,13 +7,19 @@ export default new Vuex.Store({
     user: {
       loggedIn: false,
       data: null
-    }
+    },
+    bigCard: Boolean,
   },
+
   getters: {
     user(state){
       return state.user
-    }
+    },
+    // cardSizeIsBig(bigCard){
+    //   return bigCard
+    // }
   },
+
   mutations: {
     SET_LOGGED_IN(state, value) {
       state.user.loggedIn = value;
@@ -23,8 +29,15 @@ export default new Vuex.Store({
     },
     OUT_USER: state => {
       state.user = { loggedIn: false, data: null };
-    }
+    },
+    SET_CARD_STATE(state, value) {
+      state.bigCard = value
+    },
+    // CARD_SIZE_BIG: state => {
+    //   state.bigCard = true
+    // }
   },
+
   actions: {
     fetchUser({ commit }, user) {
       commit("SET_LOGGED_IN", user !== null);
@@ -37,8 +50,14 @@ export default new Vuex.Store({
         commit("SET_USER", null);
       }
     },
+
     logoutUser: context => {
       context.commit('OUT_USER');
+    },
+
+    setCardSize({commit}, cardState) {
+      commit('SET_CARD_STATE', cardState)
     }
+
   }
 });

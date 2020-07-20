@@ -5,8 +5,14 @@
 
       <div>
         <b-nav>
-          <router-link class="nav-link pr-3" to="/upload">Upload</router-link>
-          <router-link class="nav-link pr-3" to="/test">Test</router-link>
+          <router-link class="nav-link pr-2" to="/">All</router-link>
+          <router-link class="nav-link pr-2" to="/upload">Upload</router-link>
+          <router-link class="nav-link pr-2" to="/test">Test</router-link>
+          <div class="pl-4 pt-2">
+            <b-form-checkbox v-model="IsBigCard" name="check-button" @click="store.dispatch('changeCardSize', {cardState: IsBigCard})" >
+              <b>{{ IsBigCard }}</b> Big card, state: {{ card_state_from_store }}
+            </b-form-checkbox>
+          </div>
         </b-nav>
       </div>
 
@@ -36,17 +42,24 @@
 
 <script>
 import { mapGetters } from 'vuex';
+// import { mapState } from 'vuex';
 import { auth } from './firebase'
 
 export default {
   name: 'App',
-  components: {
+  data() {
+    return {
+      IsBigCard: true
+    }
   },
   computed: {
     // ...mapState(['user']),
     ...mapGetters({
       user: "user"
-    })
+    }),
+    card_state_from_store() {
+      return this.$store.state.bigCard
+    }
   },
   methods: {
     signOut() {
