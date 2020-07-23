@@ -24,8 +24,6 @@
             <b-button type="submit" variant="primary">Save</b-button>
         </b-form>
 
-        <b-button variant="warning" @click="doConvert">Convert</b-button>
-
     </div>
 </template>
 
@@ -83,10 +81,6 @@ export default {
                 });
             this.$router.push("/");
         },
-
-        doConvert() {
-            console.log('convert')
-        }
     },
 }
 </script>

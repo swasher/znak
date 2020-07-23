@@ -13,7 +13,8 @@
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",
     "firebase": "^7.16.1",
-    "pdfjs": "^2.3.9",
+    "jquery": "^3.5.1",
+    "pdfjs-dist": "^2.4.456",
     "vue": "^2.6.11",
     "vue-pdf": "^4.1.0",
     "vue-router": "^3.2.0",
@@ -43,7 +44,9 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "vue/no-unused-vars": [1]
+    }
   },
   "browserslist": [
     "> 1%",

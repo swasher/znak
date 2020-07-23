@@ -28,7 +28,7 @@ export const storage = firebase
 
 export const usersCollection = db.collection('users')
 export const logosCollection = db.collection('logos')
-
+export const storageRef = storage.ref()
 
 firebase.getCurrentUser = () => {
     return new Promise((resolve, reject) => {

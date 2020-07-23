@@ -9,8 +9,8 @@
           <router-link class="nav-link pr-2" to="/upload">Upload</router-link>
           <router-link class="nav-link pr-2" to="/test">Test</router-link>
           <div class="pl-4 pt-2">
-            <b-form-checkbox v-model="IsBigCard" name="check-button" @click="store.dispatch('changeCardSize', {cardState: IsBigCard})" >
-              <b>{{ IsBigCard }}</b> Big card, state: {{ card_state_from_store }}
+            <b-form-checkbox :checked="cardStateStore" name="check-button" @change="updateCardSize">
+              <b>Big card</b>
             </b-form-checkbox>
           </div>
         </b-nav>
@@ -42,26 +42,32 @@
 
 <script>
 import { mapGetters } from 'vuex';
-// import { mapState } from 'vuex';
+import { mapState } from 'vuex';
 import { auth } from './firebase'
 
 export default {
   name: 'App',
   data() {
     return {
-      IsBigCard: true
+      // IsBigCard: true
     }
   },
   computed: {
-    // ...mapState(['user']),
     ...mapGetters({
-      user: "user"
+      user: "user",
     }),
-    card_state_from_store() {
-      return this.$store.state.bigCard
-    }
+    ...mapState({
+      cardStateStore: "cardIsBig"
+    }),
+
   },
   methods: {
+    updateCardSize(e) {
+      console.log('e=', e)
+      // this.$store.commit('SET_CARD_STATE', e)
+      this.$store.dispatch('setCardSize', e)
+    },
+
     signOut() {
       console.log('Start signout')
       auth

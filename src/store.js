@@ -3,21 +3,23 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  strict: process.env.NODE_ENV !== 'production',
+
   state: {
     user: {
       loggedIn: false,
       data: null
     },
-    bigCard: Boolean,
+    cardIsBig: true,
   },
 
   getters: {
     user(state){
       return state.user
     },
-    // cardSizeIsBig(bigCard){
-    //   return bigCard
-    // }
+    cardIsBig(state){
+      return state.cardIsBig
+    }
   },
 
   mutations: {
@@ -31,7 +33,7 @@ export default new Vuex.Store({
       state.user = { loggedIn: false, data: null };
     },
     SET_CARD_STATE(state, value) {
-      state.bigCard = value
+      state.cardIsBig = value
     },
     // CARD_SIZE_BIG: state => {
     //   state.bigCard = true
