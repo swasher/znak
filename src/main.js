@@ -7,7 +7,9 @@ import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css'
 import router from './router'
 import store from './store'
 import { auth } from './firebase'
+import './filter'
 import App from './App.vue'
+
 
 Vue.config.productionTip = false
 Vue.use(firestorePlugin)

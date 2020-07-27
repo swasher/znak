@@ -1,12 +1,9 @@
 <template>
     <div>
         <h1>Edit {{ znak.name }}</h1>
-<!--        <div>
-            <b-img :src=znak.url_jpg  thumbnail fluid center></b-img>
-        </div>-->
-        <pdf :src=znak.url_jpg style="width: 200px"></pdf>
-
-
+        <div>
+            <b-img :src="`${id}` | jpegURL"  thumbnail fluid center></b-img>
+        </div>
 
         <b-form @submit="updateZnak">
             <b-form-group label="Название:" >
@@ -29,14 +26,9 @@
 
 <script>
 import { logosCollection } from '../firebase'
-import pdf from "vue-pdf";
 export default {
 
     name: 'Edit',
-
-    components: {
-        pdf
-    },
 
     data() {
         return {
@@ -51,18 +43,16 @@ export default {
         }
     },
 
-    created() {
+    mounted() {
         this.fetchZnak()
     },
 
     methods: {
         fetchZnak() {
-            console.log("111");
-            logosCollection.doc(this.id).get().then(snapshot => {  //DocSnapshot
+            logosCollection.doc(this.id).get().then(snapshot => {
                 if (snapshot.exists) {
                     this.znak = snapshot.data()
                 } else {
-                    // snapshot.data() will be undefined in this case
                     console.log("No such document!");
                 }
             })

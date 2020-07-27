@@ -1,3 +1,4 @@
+/* eslint-enable */
 <template>
     <div>
 
@@ -14,56 +15,31 @@
                     autocomplete="off"
             ></b-input>
         </b-form>
-        <b-card-group v-if=cardStateStore deck>
-            <div v-for="(logo, index) in logos" :key="logo.id">
-                <b-card
-                        :title=logo.name
-                        :img-src=logo.jpegUrl
-                        img-alt="Image"
-                        img-top
-                        style="max-width: 240px;"
-                        class="mb-2 card-item"
-                    >
 
-                    <b-card-text>
-                        {{ logo.comment }}
-                    </b-card-text>
-                    <div>
-                        <b-button :to="{ name: 'edit', params: { id: logo.id } }" class="mr-1 mb-1" variant="primary" size="sm"><b-icon icon="pencil"></b-icon> Edit</b-button>
-                        <b-button v-on:click="removeLogo(logo.id, index)" class="mr-1 mb-1" href="#" variant="primary" size="sm" ><b-icon icon="trash-fill"></b-icon> Delete</b-button>
-                        <b-button v-on:click="downloadLogo(logo.id, index)" title="Download file" class="mr-1 mb-1" variant="primary" size="sm" ><b-icon icon="cloud-download"></b-icon></b-button>
-                    </div>
-                    <div style="max-width: 185px">
+        <b-card-group v-if=cardStateStore deck class="px-3">
+            <div v-for="(logo) in filteredLogos" :key="logo.id">
+                <b-card border-variant="dark" align="center" :header="logo.name" class="m-1">
+
+                    <b-img :src="`${logo.id}` | jpegURL" class="thumb1"></b-img>
+
+                    <p></p>
+                    <b-button :to="{ name: 'edit', params: { id: logo.id } }" class="mr-1 mb-1" variant="primary" size="sm"><b-icon icon="pencil"></b-icon></b-button>
+                    <b-button v-on:click="removeLogo(logo.id, index)" class="mr-1 mb-1" href="#" variant="primary" size="sm" ><b-icon icon="trash-fill"></b-icon></b-button>
+                    <b-button v-on:click="downloadLogo(logo.id, logo.name)" title="Download file" class="mr-1 mb-1" variant="primary" size="sm" ><b-icon icon="cloud-download"></b-icon></b-button>
+                    <div style="max-width: 120px">
                         <b-form-tags  v-if="logo.tags" size="sm" placeholder=""  v-model="logo.tags" ></b-form-tags>
                     </div>
-
                 </b-card>
             </div>
         </b-card-group>
-        <b-card-group v-else>
-            <div v-for="(logo, index) in logos" :key="logo.id">
-                <b-card style="max-width: 231px;" class="mb-2 mr-1 card-item">
-                    <div>
-                        <b-link href="#" @click="downloadLogo(logo.id, index)">
-                            <img :src="logo.jpegUrl" style="max-width: 100px">
-                        </b-link>
-                    </div>
-                </b-card>
 
-<!--                <div style="width: 50%">
-                    <div v-if="loadedRatio > 0 && loadedRatio < 1" style="background-color: green; color: white; text-align: center" :style="{ width: loadedRatio * 100 + '%' }">{{ Math.floor(loadedRatio * 100) }}%</div>
-                    <pdf ref="pdf" style="border: 1px solid red"
-                         :src=logo.url_jpg
-                         :page="1"
-                         @progress="loadedRatio = $event"
-                         @error="error"
-                         @num-pages="numPages = $event"
-                         @link-clicked="page = $event"
-                    ></pdf>
-                </div>-->
-
+        <b-card-group v-else deck>
+            <div v-for="(logo) in logos" :key="logo.id">
+                <b-img thumbnail :src="`${logo.id}` | jpegURL" class="thumb1"></b-img>
             </div>
         </b-card-group>
+
+
 
 <!--&lt;!&ndash;        <h3>Combined logos</h3>&ndash;&gt;-->
 <!--&lt;!&ndash;        <div v-for="log in logos" :key="log.id">{{ log.name }}</div>&ndash;&gt;-->
@@ -82,6 +58,8 @@
     import { storage } from '../firebase'
     import { JPEG_EXT } from '../const'
     import { PDF_EXT } from '../const'
+    // import { URL } from '../const'
+    // import { pdfURL } from '../utils'
 
 
     function saveBlob(blob, fileName) {
@@ -90,62 +68,6 @@
         a.download = fileName;
         a.dispatchEvent(new MouseEvent('click'));
     }
-
-
-    function queryToArray(query) {
-        let znaks = []
-        query
-            .get()
-            .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-
-                    let znak = {
-                        id: doc.id,
-                        name: doc.data().name,
-                        filename: doc.data().filename,
-                        comment: doc.data().comment,
-                        tags: doc.data().tags,
-                        // jpegUrl: jpegUrl,
-                        // pdfUrl: pdfUrl
-                    }
-
-                    storage.ref(doc.data().filename+JPEG_EXT).getDownloadURL().then(function(url) {
-                            znak.jpegUrl = url
-                    }).catch(function(error) {
-                        console.log('Error get jpg:', error)
-                    });
-
-                    // console.log('jpeg url:', jpegUrl)
-                    // console.log('jpeg path type:', Object.prototype.toString.call(jpegUrl))
-
-                    storage.ref(doc.data().filename+PDF_EXT).getDownloadURL().then(function(url) {
-                        znak.pdfUrl = url
-                    }).catch(function(error) {
-                        console.log('Error get pdf:', error)
-                    });
-
-                    znaks.push(znak)
-                    // znaks.push({
-                    //     id: doc.id,
-                    //     name: doc.data().name,
-                    //     filename: doc.data().filename,
-                    //     comment: doc.data().comment,
-                    //     tags: doc.data().tags,
-                    //     jpegUrl: jpegUrl,
-                    //     pdfUrl: pdfUrl
-                    // });
-                    console.log('processing id:', doc.id, " => ", doc.data().name);
-                    // console.log('znak array:', znak)
-                });
-                console.log('Found records:', znaks.length)
-                console.log('Returning data:', znaks)
-                return znaks
-            })
-            .catch((error) => {
-                console.log("Error getting documents: ", error)
-            })
-    }
-
 
     export default {
 
@@ -158,100 +80,42 @@
         computed: {
             ...mapState({
                 cardStateStore: "cardIsBig"
-            })
+            }),
+            // URL: () => URL,
+            filteredLogos: function () {
+                if (this.searchQuery) {
+                    return this.logos.filter(logo => {
+                        if ((logo.tags && logo.tags.includes(this.searchQuery)) || logo.name.includes(this.searchQuery)) {
+                            return logo
+                        }
+                    })
+                } else {
+                    return this.logos
+                }
+            },
         },
 
         data() {
             return {
                 searchQuery: '',
+                logosByName: [],
+                logosByTag: [],
                 logos: [],
             }
         },
 
-        watch: {
-            searchQuery: {
-                immediate: true,
-                handler(searchQuery) {
-                    if (searchQuery) {
-                        console.log('')
-                        console.log('Search by:', searchQuery)
-
-                        // this.$bind('logosByTag', logosCollection.where('tags', 'array-contains-any', [this.searchQuery]))
-                        // this.$bind('logosByName', logosCollection
-                        //     .where("name", '>=', this.searchQuery)
-                        //     .where("name", '<=', this.searchQuery+'\uf8ff')
-                        //     .orderBy('name')
-                        // );
-
-                        // SWITCH TO NON-BOUND QUERIES
-                        let logosByTags = logosCollection
-                            .where('tags', 'array-contains-any', [this.searchQuery])
-                            .orderBy('name')
-                        let logosByName = logosCollection
-                            .where("name", '>=', this.searchQuery)
-                            .where("name", '<=', this.searchQuery+'\uf8ff')
-                            .orderBy('name')
-                        let logosByTagsArray = queryToArray(logosByTags)
-                        let logosByNameArray = queryToArray(logosByName)
-                        this.logos = [...logosByNameArray, ...logosByTagsArray]
-                        // logos
-                        //     .get()
-                        //     .then((querySnapshot) => {
-                        //         querySnapshot.forEach((doc) => {
-                        //             znaks.push({
-                        //                 id: doc.id,
-                        //                 name: doc.data().name,
-                        //                 filename: doc.data().filename,
-                        //                 url_pdf: doc.data().url_pdf,
-                        //                 url_jpg: doc.data().url_jpg,
-                        //                 comment: doc.data().comment,
-                        //                 tags: doc.data().tags,
-                        //             });
-                        //             console.log(doc.id, " => ", doc.data().name);
-                        //         });
-                        //         this.znaks = znaks // this.znaks - это "общая" переменная, доступная темплейту.
-                        //         console.log('Found records:', znaks.length)
-                        //     })
-                        //     .catch((error) => {
-                        //         console.log("Error getting documents: ", error)
-                        //     })
-                    } else {
-                        console.log('Empty search')
-                        let test = queryToArray(logosCollection)
-                        console.log('this.logos TEST', this.logos)
-                        this.logos = test
-                        // bind version
-                        // this.$bind('logos', logosCollection)
-                        console.log('this.logos', this.logos)
-                    }
-                }
-            },
-            // logosByTag: {
-            //     handler(logosByTag) {
-            //         console.log('Found logos by tags:', logosByTag.length);
-            //         this.logos = {...this.logosByTag, ...this.logosByName};
-            //     }
-            // },
-            // logosByName: {
-            //     handler(logosByName) {
-            //         console.log('Found logos by name:', logosByName.length);
-            //         this.logos = {...this.logosByTag, ...this.logosByName};
-            //     }
-            // },
-            // logos: {
-            //     handler(logos) {
-            //         console.log('Found combined:', logos.length);
-            //     }
-            // }
+        firestore: {
+            logos: logosCollection
         },
-
 
         methods: {
 
             removeLogo: function (id, index) {
-                let fn = this.logos[index].filename
-                let jpgRef = storage.ref(fn+JPEG_EXT);
-                let pdfRef = storage.ref(fn+PDF_EXT);
+                console.log('id=', id)
+                // let fn = this.logos[index].filename
+                // console.log('fn=', fn)
+                let jpgRef = storage.ref(id+JPEG_EXT);
+                let pdfRef = storage.ref(id+PDF_EXT);
 
                 jpgRef.delete().then(function() {
                     console.log('Delete jpg success:', jpgRef.name)
@@ -277,18 +141,17 @@
                     })
             },
 
-            downloadLogo (id, index) {
-                console.log('Start download id:', id)
-                let pdf_filename = this.logos[index].filename+PDF_EXT
+            downloadLogo (id, name) {
+                console.log('Start download:', id, '=>', name)
+                let pdf_filename = id+PDF_EXT
                 let pdfRef = storage.ref(pdf_filename);
                 pdfRef.getDownloadURL().then(function(url) {
                     let xhr = new XMLHttpRequest();
                     xhr.responseType = 'blob';
                     /*eslint-disable no-unused-vars*/
                     xhr.onload = function(event) {
-                        /*eslint-disable no-unused-vars*/
                         let blob = xhr.response;
-                        saveBlob(blob, pdf_filename);
+                        saveBlob(blob, name+PDF_EXT);
                     };
                     xhr.open('GET', url);
                     xhr.send();
@@ -301,5 +164,19 @@
 </script>
 
 <style>
-
+.card-text {
+    font-size: 10pt;
+}
+.thumb1 {
+    width: auto;
+    height: 80px;
+    margin: 2px;
+}
+.thumb_big {
+    max-height: 40px;
+}
+.card-header {
+    font-weight: 600;
+    padding: 8px;
+}
 </style>

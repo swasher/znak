@@ -45,6 +45,7 @@ import { mapGetters } from 'vuex';
 import { mapState } from 'vuex';
 import { auth } from './firebase'
 
+
 export default {
   name: 'App',
   data() {
