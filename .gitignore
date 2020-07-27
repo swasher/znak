@@ -11,6 +11,8 @@ registration_example_templates_from_redux_package
 test_area
 /test/
 .env
+.env.development
+.env.production
 NOTES.md
 firebase_cred.html
 deprecated-requirements.txt
