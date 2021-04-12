@@ -21,10 +21,14 @@
                 <b-card border-variant="dark" align="center" :header="logo.name" class="m-1">
 
                     <b-img :src="`${logo.id}` | jpegURL" class="thumb1"></b-img>
+                    <div style="max-width: 120px">
+                    <b-card-text>{{ logo.description }}</b-card-text>
+                    </div>
+
 
                     <p></p>
                     <b-button :to="{ name: 'edit', params: { id: logo.id } }" class="mr-1 mb-1" variant="primary" size="sm"><b-icon icon="pencil"></b-icon></b-button>
-                    <b-button v-on:click="removeLogo(logo.id, index)" class="mr-1 mb-1" href="#" variant="primary" size="sm" ><b-icon icon="trash-fill"></b-icon></b-button>
+                    <b-button v-on:mouseup="removeLogo(logo.id, index)" class="mr-1 mb-1" href="#" variant="primary" size="sm" ><b-icon icon="trash-fill"></b-icon></b-button>
                     <b-button v-on:click="downloadLogo(logo.id, logo.name)" title="Download file" class="mr-1 mb-1" variant="primary" size="sm" ><b-icon icon="cloud-download"></b-icon></b-button>
                     <div style="max-width: 120px">
                         <b-form-tags  v-if="logo.tags" size="sm" placeholder=""  v-model="logo.tags" ></b-form-tags>

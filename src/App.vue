@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-navbar type="light" variant="warning">
-      <router-link class="navbar-brand float-left" to="/"><b>ZnakDB111</b>[{{node_env}}]</router-link>
+      <router-link class="navbar-brand float-left" to="/"><b>ZnakDB</b>[{{node_env}}]</router-link>
 
       <div>
         <b-nav>

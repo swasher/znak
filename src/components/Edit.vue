@@ -15,8 +15,8 @@
             <b-form-tags input-id="tags-basic" v-model="znak.tags" class="mb-2"></b-form-tags>
             </b-form-group>
 
-            <b-form-group label="Комментарий:" >
-                <b-form-input v-model="znak.comment" placeholder="Comment"></b-form-input>
+            <b-form-group label="Описание:" >
+                <b-form-input v-model="znak.description" placeholder="Description"></b-form-input>
             </b-form-group>
             <b-button type="submit" variant="primary">Save</b-button>
         </b-form>

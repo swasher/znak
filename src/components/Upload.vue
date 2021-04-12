@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="mt-3">Select or dropdown here:</div>
+        <div class="mt-3">Выбири или перетащи файлы сюда:</div>
         <b-form-file
                 v-model="files"
                 :state="Boolean(files)"
@@ -9,11 +9,12 @@
                 ref="file-input"
                 multiple
                 accept=".pdf"
+                :file-name-formatter="formatNames"
         ></b-form-file>
         <b-progress :value="progress" max=100 show-progress animated class="mt-2"></b-progress>
-        <b-button @click="uploadFiles" class="mr-2 mt-2" variant="primary">Upload</b-button>
-        <b-button @click="resetFiles" class="mr-2 mt-2">Reset</b-button>
-
+        <b-button @click="uploadFiles" class="mr-2 mt-2" variant="primary">Загрузить</b-button>
+        <b-button @click="resetFiles" class="mr-2 mt-2">Сбросить</b-button>
+w
         <div v-if="files.length" class="mt-2">
             <b-table sort-by.sync="name" class="small" striped hover :fields="fileTableFields" :items="fileTable">
                 <template v-slot:cell(uploaded)="data">
@@ -24,9 +25,9 @@
         </div>
 
         <p><b>Rendered pdf:</b>
-<!--        <div class="p-0">-->
-<!--            <canvas id="pdfCanvas"></canvas>-->
-<!--        </div>-->
+            <!--        <div class="p-0">-->
+            <!--            <canvas id="pdfCanvas"></canvas>-->
+            <!--        </div>-->
         <div id="listCanvas"></div>
 
         <div id="successStory"></div>
@@ -38,10 +39,8 @@
 <script>
     import {storage} from '../firebase';
     import {logosCollection} from '../firebase';
-    // import pdf from 'vue-pdf'
     import pdfjs from "pdfjs-dist";
     import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
-    //  const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.entry');
     import { PREVIEW_SIZE } from '../const'
     import { JPEG_EXT } from '../const'
     import { PDF_EXT } from '../const'
@@ -66,7 +65,6 @@
     //     }}
 
 
-
     export default {
         name: 'Upload',
 
@@ -80,7 +78,7 @@
                 progress: 0,
                 filesUploaded: [], // list of success uploaded files, for fileTable
                 fileTableFields: [
-                    { key: 'name', label: 'Имя_файла' },
+                    { key: 'name', label: 'Имя файла' },
                     { key: 'type', label: 'Тип' },
                     { key: 'size', label: 'Размер' },
                     { key: 'uploaded', label: 'Загружен' },
@@ -110,113 +108,141 @@
         },
 
         watch: {
-          files: function () {
+            files: function () {
 
-              pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-              // console.log('this.files.length', this.files.length)
+                pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+                // console.log('this.files.length', this.files.length)
 
-              // clean dom node (listCanvas)
-              const listCanvas = document.getElementById("listCanvas");
-              while (listCanvas.firstChild) {
-                  listCanvas.removeChild(listCanvas.lastChild);
-              }
+                // clean dom node (listCanvas)
+                const listCanvas = document.getElementById("listCanvas");
+                while (listCanvas.firstChild) {
+                    listCanvas.removeChild(listCanvas.lastChild);
+                }
 
-              for (const file of this.files) {
+                for (const file of this.files) {
 
-                  // let file = this.files[0]
-                  const reader = new FileReader();
-                  reader.onload = function () {
-                      let typedArray = new Uint8Array(reader.result); // <------- WHAT IS THAT 'THIS' (this.result) ??????????
-                      // console.log('typedArray', typedArray);
-                      const loadingTask = pdfjs.getDocument(typedArray).promise;
+                    // let file = this.files[0]
+                    const reader = new FileReader();
+                    reader.onload = function () {
+                        let typedArray = new Uint8Array(reader.result); // <------- WHAT IS THAT 'THIS' (this.result) ??????????
+                        // console.log('typedArray', typedArray);
+                        const loadingTask = pdfjs.getDocument(typedArray).promise;
 
-                      loadingTask.then(pdf => {
-                          // The document is loaded here...
-                          pdf.getPage(1).then(function (page) {
-                              console.log('')
-                              console.log('Filename:', file.name)
-                              // console.log('Page loaded');
+                        loadingTask.then(pdf => {
+                            // The document is loaded here...
 
-                              let scale = 1;
-                              let viewport = page.getViewport({scale: scale})
-                              console.log('viewport W:', viewport.width)
-                              console.log('viewport H:', viewport.height)
+                            pdf.getMetadata().then(
+                                data => {
+                                    console.log('METADATA', data.info)
+                                    console.log("## Info");
+                                    console.log(JSON.stringify(data.info, null, 2));
+                                    if (data.metadata) {
+                                        console.log("## Metadata");
+                                        console.log(JSON.stringify(data.metadata.getAll(), null, 2));
+                                        console.log();
+                                    }
+                                    // console.log('НАЗВАНИЕ', data.metadata.getAll()["dc:title"])
+                                    // console.log('ОПИСАНИЕ DESCRIPTION', data.metadata.getAll()["dc:description"])
+                                    // console.log('TAGS dc:subject', data.metadata.getAll()["dc:subject"])
+                                    // console.log('TAGS pdf:keywords', data.metadata.getAll()["pdf:keywords"]) // !!!
+                                    // console.log('lr:hierarchicalsubject', data.metadata.getAll()["lr:hierarchicalsubject"])
+
+                                    let description = data.info.Subject // or getAll()['dc:description']
+                                    let tags =  data.info.Keywords  // or data.metadata.getAll()["pdf:keywords"]
+                                    // console.log('DESCRIPTION:', description)
+                                    // console.log('KEYWORDS:', tags)
+                                    description = (description) ? description : ''
+                                    tags = (tags) ? tags.split(';') : ''
+                                    return {'tags':tags, 'description': description}
+                                }
+                            ).then(function (metadata) {
+                                pdf.getPage(1).then(function (page) {
+                                    console.log('')
+                                    console.log('Filename:', file.name)
+                                    // console.log('Page loaded');
+
+                                    let scale = 1;
+                                    let viewport = page.getViewport({scale: scale})
+                                    console.log('viewport W:', viewport.width)
+                                    console.log('viewport H:', viewport.height)
+
+                                    console.log('DESCRIPTION:', metadata.description)
+                                    console.log('KEYWORDS:', metadata.tags)
+
+                                    // let canvas = document.getElementById('pdfCanvas');   // можно делать get сущесвующего канваса, а можно создать новый!
+                                    let new_canvas = document.createElement("pdfCanvass");
+                                    new_canvas.innerHTML = `<canvas id="${file.name}" class="p-2"></canvas>`;
+                                    let div_for_canvases = document.getElementById("listCanvas");
+                                    div_for_canvases.appendChild(new_canvas);
+                                    let canvas = document.getElementById(file.name);
+                                    canvas.dataset.description = metadata.description
+                                    canvas.dataset.tags = metadata.tags
+
+                                    /* start вычисляем нужный scale, чтобы pdf вмещался в квадрат со стороной PREVIEW_SIZE,
+                                    и затем устанавливаем одну из сторон канваса в размер скалированного PDF*/
+                                    console.log('square size:', PREVIEW_SIZE)
+
+                                    let scale_w = PREVIEW_SIZE / viewport.width;
+                                    let scale_h = PREVIEW_SIZE / viewport.height;
+                                    scale = Math.min(scale_h, scale_w)
+
+                                    console.log('scale_w', scale_w)
+                                    console.log('scale_h', scale_h)
+                                    console.log('scale=', scale)
+
+                                    viewport = page.getViewport({scale: scale});
+                                    console.log('viewport scaled W:', viewport.width)
+                                    console.log('viewport scaled H:', viewport.height)
+
+                                    if (viewport.width>viewport.height) {
+                                        canvas.height = viewport.height
+                                        canvas.width = PREVIEW_SIZE
+                                    } else {
+                                        canvas.width = viewport.width
+                                        canvas.height = PREVIEW_SIZE
+                                    }
+                                    /* end вычисляем нужный scale */
 
 
-                              // let canvas = document.getElementById('pdfCanvas');   // можно делать get сущесвующего канваса, а можно создать новый!
-                              let new_canvas = document.createElement("pdfCanvass");
-                              new_canvas.innerHTML = `<canvas id="${file.name}" class="p-2"></canvas>`;
-                              let div_for_canvases = document.getElementById("listCanvas");
-                              div_for_canvases.appendChild(new_canvas);
-                              let canvas = document.getElementById(file.name);
+                                    // canvas.width = 200;
+                                    // canvas.height = 200;
+                                    // canvas.style.width  = '200px';
+                                    // canvas.style.height = '100px';
+                                    // Рендерится таким образом
+                                    // <canvas id="pdfCanvas" width=canvas.width height=canvas.height style="width: canvas.style.width"></canvas>
 
-                              /* start вычисляем нужный scale, чтобы pdf вмещался в квадрат со стороной PREVIEW_SIZE,
-                              и затем устанавливаем одну из сторон канваса в размер скалированного PDF*/
-                              console.log('square size:', PREVIEW_SIZE)
+                                    let context = canvas.getContext('2d');
 
-                              let scale_w = PREVIEW_SIZE / viewport.width;
-                              let scale_h = PREVIEW_SIZE / viewport.height;
-                              scale = Math.min(scale_h, scale_w)
-
-                              console.log('scale_w', scale_w)
-                              console.log('scale_h', scale_h)
-                              console.log('scale=', scale)
-
-                              viewport = page.getViewport({scale: scale});
-                              console.log('viewport scaled W:', viewport.width)
-                              console.log('viewport scaled H:', viewport.height)
-
-                              if (viewport.width>viewport.height) {
-                                  canvas.height = viewport.height
-                                  canvas.width = PREVIEW_SIZE
-                              } else {
-                                  canvas.width = viewport.width
-                                  canvas.height = PREVIEW_SIZE
-                              }
-                              /* end вычисляем нужный scale */
-
-
-                              // canvas.width = 200;
-                              // canvas.height = 200;
-                              // canvas.style.width  = '200px';
-                              // canvas.style.height = '100px';
-                              // Рендерится таким образом
-                              // <canvas id="pdfCanvas" width=canvas.width height=canvas.height style="width: canvas.style.width"></canvas>
-
-
-                              let context = canvas.getContext('2d');
-
-                              // Render PDF page into canvas context
-                              let renderContext = {
-                                  canvasContext: context,
-                                  viewport: viewport
-                              };
-                              let renderTask = page.render(renderContext);
-                              renderTask.promise.then(function () {
-                                  console.log('Page rendered');
-                              });
-
-                          });
-                      });
-                  };
-                  reader.readAsArrayBuffer(file);
-              }
-
-
-              // loadPdf(this.files[0], "#pdf-canvas")
-          }
+                                    // Render PDF page into canvas context
+                                    let renderContext = {
+                                        canvasContext: context,
+                                        viewport: viewport
+                                    };
+                                    let renderTask = page.render(renderContext);
+                                    renderTask.promise.then(function () {
+                                        console.log('Page rendered');
+                                    });
+                                });
+                            })
+                        });
+                    };
+                    reader.readAsArrayBuffer(file);
+                }
+            }
         },
 
         methods: {
-            // DEPRECATED
-            // previewImage(event) {
-            //     this.uploadValue = 0;
-            //     this.picture = null;
-            //     this.imageData = event.target.files[0];
-            // },
 
             resetFiles() {
                 this.$refs['file-input'].reset()
+            },
+
+            formatNames(files) {
+                if (files.length === 1) {
+                    return files[0].name;
+                } else {
+                    return `Выбрано ${files.length} файла(-ов)`;
+                }
             },
 
             uploadFiles() {
@@ -226,9 +252,14 @@
                 for (let file of this.files) {
                     console.log('Upload:', file.name)
 
+                    let canvas = document.getElementById(file.name);
+                    // let description = (canvas.dataset.description) ? canvas.dataset.description : ''
+                    // let tags = (canvas.dataset.tags) ? canvas.dataset.tags : ''
+
                     logosCollection.add({
                         name: file.name.split('.').slice(0, -1).join('.'),
-                        comment: '',
+                        description: canvas.dataset.description,
+                        tags: canvas.dataset.tags
                     })
                     .then(docRef => {
                         console.log("Document written with ID: ", docRef.id);
