@@ -16,8 +16,8 @@
             ></b-input>
         </b-form>
 
-        <b-card-group v-if=cardStateStore deck class="px-3">
-            <div v-for="(logo) in filteredLogos" :key="logo.id">
+        <b-card-group v-if="viewMode === 'big'" deck class="px-3">
+            <div v-for="(logo, index) in filteredLogos" :key="logo.id">
                 <b-card border-variant="dark" align="center" :header="logo.name" class="m-1">
 
                     <b-img :src="`${logo.id}` | jpegURL" class="thumb1"></b-img>
@@ -37,12 +37,39 @@
             </div>
         </b-card-group>
 
-        <b-card-group v-else deck>
+        <b-card-group v-else-if="viewMode === 'small'" deck>
             <div v-for="(logo) in logos" :key="logo.id">
                 <b-img thumbnail :src="`${logo.id}` | jpegURL" class="thumb1"></b-img>
             </div>
         </b-card-group>
 
+        <b-card-group v-else-if="viewMode === 'list'" deck>
+            <div>
+                <b-table-simple hover small caption-top >
+                    <caption>CAPTION:</caption>
+                    <b-thead head-variant="light">
+                        <b-tr>
+                            <b-th>Pict</b-th>
+                            <b-th>Name</b-th>
+                            <b-th>Desc</b-th>
+                            <b-th>Tags</b-th>
+                        </b-tr>
+                    </b-thead>
+                    <b-tbody>
+
+                        <b-tr v-for="(logo) in logos" :key="logo.id">
+                            <b-td><b-img :src="`${logo.id}` | jpegURL" class="thumb1"></b-img></b-td>
+                            <b-td>{{ logo.name }} </b-td>
+                            <b-td>{{ logo.description }} </b-td>
+                            <b-td><b-form-tags  v-if="logo.tags" size="sm" placeholder=""  v-model="logo.tags" ></b-form-tags></b-td>
+                        </b-tr>>
+
+                    </b-tbody>
+                </b-table-simple>
+            </div>
+
+
+        </b-card-group>
 
 
 <!--&lt;!&ndash;        <h3>Combined logos</h3>&ndash;&gt;-->
@@ -77,13 +104,16 @@
 
         name: 'Znaki',
 
+        firestore: {
+            logos: logosCollection
+        },
+
         props: {
-          // bigCard: Boolean,
         },
 
         computed: {
             ...mapState({
-                cardStateStore: "cardIsBig"
+                viewMode: "viewMode"
             }),
             // URL: () => URL,
             filteredLogos: function () {
@@ -108,14 +138,13 @@
             }
         },
 
-        firestore: {
-            logos: logosCollection
-        },
+
 
         methods: {
 
             removeLogo: function (id, index) {
                 console.log('id=', id)
+                console.log('index=', index)
                 // let fn = this.logos[index].filename
                 // console.log('fn=', fn)
                 let jpgRef = storage.ref(id+JPEG_EXT);
@@ -134,14 +163,16 @@
                 });
 
                 logosCollection.doc(id).delete().then(() =>{
-                        this.$bvToast.toast(this.logos[index].name, {
-                            title: 'Delete:',
-                            autoHideDelay: 3000
-                        })
-                        this.$delete(this.logos, index);
+                    console.log('Debug value:', this.logos[index])
+                    this.$bvToast.toast(this.logos[index].name, {
+                        title: 'Удален значок:',
+                        variant: 'success',
+                        autoHideDelay: 3000
+                    })
+                    this.$delete(this.logos, index);
                 })
                     .catch((error) => {
-                        console.error(error);
+                        console.error('Error delete:', error);
                     })
             },
 

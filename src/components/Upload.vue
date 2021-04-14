@@ -10,11 +10,20 @@
                 multiple
                 accept=".pdf"
                 :file-name-formatter="formatNames"
-        ></b-form-file>
-        <b-progress :value="progress" max=100 show-progress animated class="mt-2"></b-progress>
+        >
+
+            <template slot="file-name" slot-scope="{ names }">
+                <b-badge variant="dark">{{ names[0] }}</b-badge>
+                <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
+                    + {{ names.length - 1 }} More files
+                </b-badge>
+            </template>
+
+        </b-form-file>
+        <b-progress :value="progress" :animated="animated" max=100 show-progress  class="mt-2"></b-progress>
         <b-button @click="uploadFiles" class="mr-2 mt-2" variant="primary">Загрузить</b-button>
         <b-button @click="resetFiles" class="mr-2 mt-2">Сбросить</b-button>
-w
+
         <div v-if="files.length" class="mt-2">
             <b-table sort-by.sync="name" class="small" striped hover :fields="fileTableFields" :items="fileTable">
                 <template v-slot:cell(uploaded)="data">
@@ -76,6 +85,7 @@ w
                 files: [],
                 state: false,
                 progress: 0,
+                animated: true,
                 filesUploaded: [], // list of success uploaded files, for fileTable
                 fileTableFields: [
                     { key: 'name', label: 'Имя файла' },
@@ -124,7 +134,7 @@ w
                     // let file = this.files[0]
                     const reader = new FileReader();
                     reader.onload = function () {
-                        let typedArray = new Uint8Array(reader.result); // <------- WHAT IS THAT 'THIS' (this.result) ??????????
+                        let typedArray = new Uint8Array(reader.result);
                         // console.log('typedArray', typedArray);
                         const loadingTask = pdfjs.getDocument(typedArray).promise;
 

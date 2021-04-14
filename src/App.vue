@@ -8,11 +8,25 @@
           <router-link class="nav-link pr-2" to="/">All</router-link>
           <router-link class="nav-link pr-2" to="/upload">Upload</router-link>
           <router-link class="nav-link pr-2" to="/test">Test</router-link>
+
+          <b-form-group v-slot="{ ariaDescribedby }" >
+            <b-form-radio-group
+                    id="btn-radios"
+                    :value="viewMode"
+                    :options="options"
+                    :aria-describedby="ariaDescribedby"
+                    button-variant="primary"
+                    size="sm"
+                    name="radio-btn-outline"
+                    buttons
+                    @change="changeViewMode"
+            ></b-form-radio-group>
+          </b-form-group>
+
           <div class="pl-4 pt-2">
-            <b-form-checkbox :checked="cardStateStore" name="check-button" @change="updateCardSize">
-              <b>Big card</b>
-            </b-form-checkbox>
+            ListMode: {{ viewMode }}
           </div>
+
         </b-nav>
       </div>
 
@@ -50,24 +64,30 @@ export default {
   name: 'App',
   data() {
     return {
-      // IsBigCard: true
-      node_env: process.env.NODE_ENV
+      node_env: process.env.NODE_ENV,
+      selected: "small",
+      options: [
+        { text: 'Small', value: 'small' },
+        { text: 'Big', value: 'big' },
+        { text: 'List', value: 'list' },
+      ]
     }
   },
   computed: {
-    ...mapGetters({
-      user: "user",
-    }),
-    ...mapState({
-      cardStateStore: "cardIsBig"
-    }),
+    ...mapGetters([
+      'user',
+    ]),
+
+    ...mapState([
+      'viewMode'
+    ]),
 
   },
   methods: {
-    updateCardSize(e) {
+    changeViewMode(e) {
       console.log('e=', e)
-      // this.$store.commit('SET_CARD_STATE', e)
-      this.$store.dispatch('setCardSize', e)
+      this.$store.commit('SET_VIEW_MODE', e)
+      // this.$store.dispatch('setViewMode', e)
     },
 
     signOut() {

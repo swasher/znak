@@ -12,15 +12,15 @@ export default new Vuex.Store({
       loggedIn: false,
       data: null
     },
-    cardIsBig: true,
+    viewMode: 'small',
   },
 
   getters: {
     user(state){
       return state.user
     },
-    cardIsBig(state){
-      return state.cardIsBig
+    viewMode(state){
+      return state.viewMode
     }
   },
 
@@ -34,12 +34,9 @@ export default new Vuex.Store({
     OUT_USER: state => {
       state.user = { loggedIn: false, data: null };
     },
-    SET_CARD_STATE(state, value) {
-      state.cardIsBig = value
+    SET_VIEW_MODE(state, value) {
+      state.viewMode = value
     },
-    // CARD_SIZE_BIG: state => {
-    //   state.bigCard = true
-    // }
   },
 
   actions: {
@@ -59,9 +56,8 @@ export default new Vuex.Store({
       context.commit('OUT_USER');
     },
 
-    setCardSize({commit}, cardState) {
-      commit('SET_CARD_STATE', cardState)
+    setViewMode({commit}, viewMode) {
+      commit('SET_VIEW_MODE', viewMode)
     }
-
   }
 });
