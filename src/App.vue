@@ -12,7 +12,7 @@
           <b-form-group v-slot="{ ariaDescribedby }" >
             <b-form-radio-group
                     id="btn-radios"
-                    :value="viewMode"
+                    v-model="viewMode"
                     :options="options"
                     :aria-describedby="ariaDescribedby"
                     button-variant="primary"
@@ -56,7 +56,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { mapState } from 'vuex';
+// import { mapState } from 'vuex';
 import { auth } from './firebase'
 
 
@@ -73,16 +73,28 @@ export default {
       ]
     }
   },
+
   computed: {
     ...mapGetters([
       'user',
     ]),
 
-    ...mapState([
+    /* ...mapState([
       'viewMode'
-    ]),
+    ]),*/
 
+    // мы не можем объявить через mapState, потому что viewMode используется в форме и требует двунаправленности
+    // см. https://vuex.vuejs.org/ru/guide/forms.html
+    viewMode: {
+      get () {
+        return this.$store.state.viewMode
+      },
+      set (e) {
+        this.$store.commit('SET_VIEW_MODE', e)
+      }
+    }
   },
+
   methods: {
     changeViewMode(e) {
       console.log('e=', e)
