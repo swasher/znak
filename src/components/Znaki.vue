@@ -16,32 +16,34 @@
             ></b-input>
         </b-form>
 
-        <b-card-group v-if="viewMode === 'big'" deck class="px-3">
 
-            <b-form-tags
-                    placeholder=""
-                    no-add-on-enter
-                    input-id="tags-basic"
-                    v-model="genereateTagCloud"
-            >
-                <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
-                    <div class="d-inline-block" style="font-size: 1.2rem;">
-                        <b-form-tag
-                            disabled
+        <b-form-tags
+                placeholder=""
+                no-add-on-enter
+                input-id="tags-basic"
+                v-model="genereateTagCloud"
+                class="mb-2"
+        >
+            <template v-slot="{ tags }">
+                <div class="d-inline-block" style="font-size: 1.2rem;">
+                    <b-form-tag
                             v-for="tag in tags"
-                            :no-remove="true"
-                            @remove="removeTag(tag)"
+                            no-remove
                             :key="tag"
-                            :title="tag"
-                            :variant="tagVariant"
+                            variant="primary"
                             class="mr-1"
+                    >
+                        <div v-on:click="tagCloudClick(tag)">
+                            {{ tag }}
+                        </div>
+                    </b-form-tag>
+                </div>
+            </template>
 
-                        ><div v-on:click="tagCloudClick(tag)">{{ tag }}</div></b-form-tag>
-                    </div>
-                </template>
+        </b-form-tags>
 
-            </b-form-tags>
 
+        <b-card-group v-if="viewMode === 'big'" deck class="px-3">
 
             <div v-for="(logo, index) in filteredLogos" :key="logo.id">
                 <b-card border-variant="dark" align="center" :header="logo.name" class="m-1">
@@ -69,12 +71,8 @@
         </b-card-group>
 
         <b-card-group v-else-if="viewMode === 'small'" deck>
-            <div v-for="(logo) in logos" :key="logo.id">
-                <div class="hover1">
-                    <figure>
+            <div v-for="(logo) in filteredLogos" :key="logo.id" class="hover1">
                         <b-img  thumbnail v-on:click="downloadLogo(logo.id, logo.name)" :src="`${logo.id}` | jpegURL" class="thumb1" style="cursor: pointer"></b-img>
-                    </figure>
-                </div>
             </div>
         </b-card-group>
 
@@ -92,12 +90,12 @@
                     </b-thead>
                     <b-tbody>
 
-                        <b-tr v-for="(logo) in logos" :key="logo.id">
+                        <b-tr v-for="(logo) in filteredLogos" :key="logo.id">
                             <b-td><b-img :src="`${logo.id}` | jpegURL" class="thumb1"></b-img></b-td>
                             <b-td>{{ logo.name }} </b-td>
                             <b-td>{{ logo.description }} </b-td>
                             <b-td><b-form-tags  v-if="logo.tags" size="sm" placeholder=""  v-model="logo.tags" ></b-form-tags></b-td>
-                        </b-tr>>
+                        </b-tr>
 
                     </b-tbody>
                 </b-table-simple>
@@ -144,12 +142,23 @@
         props: {
         },
 
+        data() {
+            return {
+                searchQuery: '',
+                logosByName: [],
+                logosByTag: [],
+                logos: [],
+                tagCloud: [],
+            }
+        },
+
         computed: {
             ...mapState({
                 viewMode: "viewMode"
             }),
             // URL: () => URL,
             filteredLogos: function () {
+                console.log('start filtering')
                 if (this.searchQuery) {
                     return this.logos.filter(logo => {
                         if ((logo.tags && logo.tags.includes(this.searchQuery)) || logo.name.includes(this.searchQuery)) {
@@ -187,22 +196,12 @@
             }
         },
 
-        data() {
-            return {
-                searchQuery: '',
-                logosByName: [],
-                logosByTag: [],
-                logos: [],
-                tagCloud: [],
-            }
-        },
-
-
 
         methods: {
 
-            tagCloudClick (e) {
-                console.log(e)
+            tagCloudClick (tag) {
+                console.log(tag)
+                this.searchQuery = tag
             },
 
             removeLogo (id, index) {
@@ -265,11 +264,7 @@
 .card-text {
     font-size: 10pt;
 }
-.thumb1 {
-    width: auto;
-    height: 80px;
-    margin: 2px;
-}
+
 .thumb_big {
     max-height: 40px;
 }
@@ -278,14 +273,22 @@
     padding: 8px;
 }
 
+.thumb1 {
+    width: auto;
+    height: 80px;
+    margin: 2px;
+}
+.thumb1:hover {
+    opacity: .8;
+}
 .hover1 figure {
 }
-.hover1 figure img {
+.hover1 img {
     opacity: 1;
     -webkit-transition: .3s ease-in-out;
     transition: .3s ease-in-out;
 }
-.hover1 figure:hover {
+.hover1:hover {
     background: #e5bb77;
 }
 .hover1 figure:hover img {
