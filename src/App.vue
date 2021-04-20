@@ -1,15 +1,21 @@
 <template>
   <div>
     <b-navbar type="light" variant="warning">
+      <b-navbar-brand href="#">
+        <img src="navbar1.png" alt="Kitten">
+      </b-navbar-brand>
+
+
       <router-link class="navbar-brand float-left" to="/"><b>ZnakDB</b>[{{node_env}}]</router-link>
+
 
       <div>
         <b-nav>
-          <router-link class="nav-link pr-2" to="/">All</router-link>
-          <router-link class="nav-link pr-2" to="/upload">Upload</router-link>
-          <router-link class="nav-link pr-2" to="/test">Test</router-link>
+          <router-link class="nav-link pr-2 pt-3" to="/">All</router-link>
+          <router-link class="nav-link pr-2 pt-3" to="/upload">Upload</router-link>
+          <router-link class="nav-link pr-2 pt-3" to="/test">Test</router-link>
 
-          <b-form-group v-slot="{ ariaDescribedby }" >
+          <b-form-group v-slot="{ ariaDescribedby }" class="pt-2 pl-4">
             <b-form-radio-group
                     id="btn-radios"
                     v-model="viewMode"
@@ -22,11 +28,6 @@
                     @change="changeViewMode"
             ></b-form-radio-group>
           </b-form-group>
-
-          <div class="pl-4 pt-2">
-            ListMode: {{ viewMode }}
-          </div>
-
         </b-nav>
       </div>
 
@@ -79,9 +80,9 @@ export default {
       'user',
     ]),
 
-    /* ...mapState([
-      'viewMode'
-    ]),*/
+    // ...mapState([
+    //  'viewMode'
+    // ]),
 
     // мы не можем объявить через mapState, потому что viewMode используется в форме и требует двунаправленности
     // см. https://vuex.vuejs.org/ru/guide/forms.html

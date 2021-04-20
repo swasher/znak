@@ -33,7 +33,7 @@
                             variant="primary"
                             class="mr-1"
                     >
-                        <div v-on:click="tagCloudClick(tag)">
+                        <div v-on:click="tagCloudClick(tag)" style="cursor: pointer">
                             {{ tag }}
                         </div>
                     </b-form-tag>
@@ -46,7 +46,7 @@
         <b-card-group v-if="viewMode === 'big'" deck class="px-3">
 
             <div v-for="(logo, index) in filteredLogos" :key="logo.id">
-                <b-card border-variant="dark" align="center" :header="logo.name" class="m-1">
+                <b-card border-variant="dark" align="center" :header="logo.name" class="m-1" style="max-width: 200px">
 
                     <b-img :src="`${logo.id}` | jpegURL" class="thumb1"></b-img>
                     <div style="max-width: 120px">
@@ -57,9 +57,31 @@
                     <b-button :to="{ name: 'edit', params: { id: logo.id } }" class="mr-1 mb-1" variant="primary" size="sm"><b-icon icon="pencil"></b-icon></b-button>
                     <b-button v-on:mouseup="removeLogo(logo.id, index)" class="mr-1 mb-1" href="#" variant="primary" size="sm" ><b-icon icon="trash-fill"></b-icon></b-button>
                     <b-button v-on:click="downloadLogo(logo.id, logo.name)" title="Download file" class="mr-1 mb-1" variant="primary" size="sm" ><b-icon icon="cloud-download"></b-icon></b-button>
-                    <div style="max-width: 120px">
-                        <b-form-tags  v-if="logo.tags" size="sm" placeholder=""  v-model="logo.tags" ></b-form-tags>
-                    </div>
+                    <b-form-tags
+                            v-if="logo.tags"
+                            placeholder=""
+                            no-add-on-enter
+                            input-id="tags-basic"
+                            v-model="logo.tags"
+                            class="m-0"
+                            size="sm"
+                            style="max-width: 120px"
+                    >
+                        <template v-slot="{ tags }">
+                            <div class="d-inline-block" >   <!--style="font-size: 1.2rem;"-->
+                                <b-form-tag
+                                        v-for="tag in tags"
+                                        no-remove
+                                        :key="tag"
+                                        variant="secondary"
+                                        class="mr-1"
+                                >
+                                        {{ tag }}
+                                </b-form-tag>
+                            </div>
+                        </template>
+                    </b-form-tags>
+
 
                     <!-- Попытка рендерить теги самостоятельно; выглядит уебански
                     <div style="max-width: 100px">
@@ -161,7 +183,7 @@
                 console.log('start filtering')
                 if (this.searchQuery) {
                     return this.logos.filter(logo => {
-                        if ((logo.tags && logo.tags.includes(this.searchQuery)) || logo.name.includes(this.searchQuery)) {
+                        if ((logo.tags && logo.tags.includes(this.searchQuery)) || logo.name.toLowerCase().includes(this.searchQuery.toLowerCase())) {
                             return logo
                         }
                     })
@@ -233,9 +255,15 @@
                     })
                     this.$delete(this.logos, index);
                 })
-                    .catch((error) => {
-                        console.error('Error delete:', error);
+                .catch((error) => {
+                    console.error('Error delete:', error);
+                    this.$bvToast.toast(error.message, {
+                        title: 'Вы должны быть зарегестрированы:',
+                        solid: true,
+                        variant: 'danger',
+                        autoHideDelay: 5000
                     })
+                })
             },
 
             downloadLogo (id, name) {

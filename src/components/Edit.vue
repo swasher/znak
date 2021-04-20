@@ -68,6 +68,12 @@ export default {
                 })
                 .catch((error) => {
                     console.error("Error updating document: ", error);
+                    this.$bvToast.toast(error.message, {
+                        title: 'Вы должны быть зарегестрированы:',
+                        solid: true,
+                        variant: 'danger',
+                        autoHideDelay: 5000
+                    })
                 });
             this.$router.push("/");
         },
