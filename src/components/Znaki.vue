@@ -17,6 +17,32 @@
         </b-form>
 
         <b-card-group v-if="viewMode === 'big'" deck class="px-3">
+
+            <b-form-tags
+                    placeholder=""
+                    no-add-on-enter
+                    input-id="tags-basic"
+                    v-model="genereateTagCloud"
+            >
+                <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
+                    <div class="d-inline-block" style="font-size: 1.2rem;">
+                        <b-form-tag
+                            disabled
+                            v-for="tag in tags"
+                            :no-remove="true"
+                            @remove="removeTag(tag)"
+                            :key="tag"
+                            :title="tag"
+                            :variant="tagVariant"
+                            class="mr-1"
+
+                        ><div v-on:click="tagCloudClick(tag)">{{ tag }}</div></b-form-tag>
+                    </div>
+                </template>
+
+            </b-form-tags>
+
+
             <div v-for="(logo, index) in filteredLogos" :key="logo.id">
                 <b-card border-variant="dark" align="center" :header="logo.name" class="m-1">
 
@@ -25,7 +51,6 @@
                     <b-card-text>{{ logo.description }}</b-card-text>
                     </div>
 
-
                     <p></p>
                     <b-button :to="{ name: 'edit', params: { id: logo.id } }" class="mr-1 mb-1" variant="primary" size="sm"><b-icon icon="pencil"></b-icon></b-button>
                     <b-button v-on:mouseup="removeLogo(logo.id, index)" class="mr-1 mb-1" href="#" variant="primary" size="sm" ><b-icon icon="trash-fill"></b-icon></b-button>
@@ -33,26 +58,36 @@
                     <div style="max-width: 120px">
                         <b-form-tags  v-if="logo.tags" size="sm" placeholder=""  v-model="logo.tags" ></b-form-tags>
                     </div>
+
+                    <!-- Попытка рендерить теги самостоятельно; выглядит уебански
+                    <div style="max-width: 100px">
+                        <b-badge v-for="tag in logo.tags" :key="tag"  variant="secondary" size="sm">{{ tag }}</b-badge>
+                    </div>-->
+
                 </b-card>
             </div>
         </b-card-group>
 
         <b-card-group v-else-if="viewMode === 'small'" deck>
             <div v-for="(logo) in logos" :key="logo.id">
-                <b-img thumbnail :src="`${logo.id}` | jpegURL" class="thumb1"></b-img>
+                <div class="hover1">
+                    <figure>
+                        <b-img  thumbnail v-on:click="downloadLogo(logo.id, logo.name)" :src="`${logo.id}` | jpegURL" class="thumb1" style="cursor: pointer"></b-img>
+                    </figure>
+                </div>
             </div>
         </b-card-group>
 
         <b-card-group v-else-if="viewMode === 'list'" deck>
             <div>
                 <b-table-simple hover small caption-top >
-                    <caption>CAPTION:</caption>
+                    <!--<caption>CAPTION:</caption>-->
                     <b-thead head-variant="light">
                         <b-tr>
                             <b-th>Pict</b-th>
                             <b-th>Name</b-th>
                             <b-th>Desc</b-th>
-                            <b-th>Tags</b-th>
+                            <b-th style="{ width: 10px }">Tags</b-th>
                         </b-tr>
                     </b-thead>
                     <b-tbody>
@@ -67,8 +102,6 @@
                     </b-tbody>
                 </b-table-simple>
             </div>
-
-
         </b-card-group>
 
 
@@ -127,6 +160,31 @@
                     return this.logos
                 }
             },
+
+            genereateTagCloud: function () {
+                // let tagCloud = [];
+                let cloud1 = []
+                this.logos.forEach(element => cloud1.push(element.tags))
+                // console.log(cloud1)
+
+
+                // Объеденяем "массив массивов" в один плоский массив (каждый логотип имеет массив тегов)
+                let cloud = [].concat(...cloud1);
+                console.log(cloud)
+
+                // удаляем пустые теги
+                cloud = cloud.filter(elem => !!elem)
+                console.log(cloud)
+
+                // удаляем повторяющиеся теги
+                cloud = Array.from(new Set(cloud))
+                console.log(cloud)
+
+                // сортируем
+                cloud.sort()
+
+                return cloud
+            }
         },
 
         data() {
@@ -135,6 +193,7 @@
                 logosByName: [],
                 logosByTag: [],
                 logos: [],
+                tagCloud: [],
             }
         },
 
@@ -142,7 +201,11 @@
 
         methods: {
 
-            removeLogo: function (id, index) {
+            tagCloudClick (e) {
+                console.log(e)
+            },
+
+            removeLogo (id, index) {
                 console.log('id=', id)
                 console.log('index=', index)
                 // let fn = this.logos[index].filename
@@ -214,4 +277,20 @@
     font-weight: 600;
     padding: 8px;
 }
+
+.hover1 figure {
+}
+.hover1 figure img {
+    opacity: 1;
+    -webkit-transition: .3s ease-in-out;
+    transition: .3s ease-in-out;
+}
+.hover1 figure:hover {
+    background: #e5bb77;
+}
+.hover1 figure:hover img {
+    /*background: #b44545;*/
+    opacity: .9;
+}
+
 </style>
