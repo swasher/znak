@@ -74,15 +74,10 @@
                     { text: 'Big', value: 'big' },
                     { text: 'List', value: 'list' },
                 ],
-                buttons: ['small', 'big', 'list']
             }
         },
 
         computed: {
-            buttonState: {
-                return: ['true', 'false', 'false']
-            },
-
             ...mapGetters([
                 'user',
             ]),
