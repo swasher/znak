@@ -2,34 +2,37 @@
   <div>
     <b-navbar type="light" variant="warning">
       <b-navbar-brand href="#">
-        <img src="navbar1.png" alt="Kitten">
+        <img v-if="node_env === 'production'" src="./assets/navbar2.png">
+        <img v-if="node_env === 'development'" src="./assets/navbar2dev.png">
       </b-navbar-brand>
 
+      <router-link class="navbar-brand float-left" to="/" ><b>ZnakDB</b></router-link>
 
-      <router-link class="navbar-brand float-left" to="/"><b>ZnakDB</b>[{{node_env}}]</router-link>
-
-
-      <div>
         <b-nav>
-          <router-link class="nav-link pr-2 pt-3" to="/">All</router-link>
-          <router-link class="nav-link pr-2 pt-3" to="/upload">Upload</router-link>
-          <router-link class="nav-link pr-2 pt-3" to="/test">Test</router-link>
-
-          <b-form-group v-slot="{ ariaDescribedby }" class="pt-2 pl-4">
-            <b-form-radio-group
-                    id="btn-radios"
-                    v-model="viewMode"
-                    :options="options"
-                    :aria-describedby="ariaDescribedby"
-                    button-variant="primary"
-                    size="sm"
-                    name="radio-btn-outline"
-                    buttons
-                    @change="changeViewMode"
-            ></b-form-radio-group>
-          </b-form-group>
+<!--          <router-link class="nav-link pr-2 pt-3" to="/">All</router-link>-->
+<!--          <router-link class="nav-link pr-2 pt-3" to="/upload">Upload</router-link>-->
+<!--          <router-link class="nav-link pr-2 pt-3" to="/test" v-if="node_env === 'development'">Test</router-link>-->
         </b-nav>
-      </div>
+
+      <b-nav-form>
+        <b-button href="/" variant="success" size="" class="mr-1">Знаки</b-button>
+        <b-button href="/upload" variant="success" size="" class="mr-4">Загрузить</b-button>
+        <b-form-group v-slot="{ ariaDescribedby }" >
+          <b-form-radio-group
+                  id="btn-radios"
+                  v-model="viewMode"
+                  :options="options"
+                  :aria-describedby="ariaDescribedby"
+                  button-variant="primary"
+                  size="sm"
+                  name="radio-btn-outline"
+                  buttons
+                  v-on:change="changeViewMode"
+                  v-on:click="console.log('switch')"
+          ></b-form-radio-group>
+        </b-form-group>
+
+      </b-nav-form>
 
       <b-navbar-nav class="ml-auto">
         <div v-if="user.loggedIn">

@@ -107,7 +107,7 @@
                             <b-th>Pict</b-th>
                             <b-th>Name</b-th>
                             <b-th>Desc</b-th>
-                            <b-th style="{ width: 10px }">Tags</b-th>
+                            <b-th style="{ width: 10% }">Tags</b-th>
                         </b-tr>
                     </b-thead>
                     <b-tbody>
