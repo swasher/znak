@@ -2,9 +2,15 @@
 
 https://znakdb.web.app
 
+## Powered by 
+![Firebase logo](!https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Firebase_Logo.svg/1280px-Firebase_Logo.svg.png)
+![Vuw logo](https://www.kindpng.com/picc/m/452-4529223_vue-js-logo-png-transparent-png.png)
+![Bootstrap-vue logo](https://bootstrap-vue.org/_nuxt/icons/icon_512x512.67aef2.png)
+![Pdfjs logo](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Pdf-js_logo.svg/1200px-Pdf-js_logo.svg.png)
+
 TODO
 ---------------
-- [x] Персистентное хранение состояние Big Card в localStorage
+- [x] Персистентное хранение состояние Big Card в localStorage  
 - [ ] Transition groups для карточек
 - [x] Асинхронная загрузка картинок
 - [x] Loader для картинок с процентами
@@ -44,3 +50,4 @@ TODO
 - [x] Сделать обрезание названия в Big View, по кол-ву символов
 - [ ] Можно сделать такой life quality - название папки, из которой заливаются картинки, использовать как тег. Так удобно назначить тег все залитым картинкам.
 - [ ] Сделать возможность обновлять файл значека (без удаления карточки)
+- [ ] Если логотип ширикий (Вконтакте) он заползает в Big View на соседние карточки

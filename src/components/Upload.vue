@@ -23,6 +23,7 @@
         <b-progress :value="progress" :animated="animated" max=100 show-progress  class="mt-2"></b-progress>
         <b-button @click="uploadFiles" class="mr-2 mt-2" variant="primary">Загрузить</b-button>
         <b-button @click="resetFiles" class="mr-2 mt-2">Сбросить</b-button>
+        {{ uploadStatus }}
 
         <div v-if="files.length" class="mt-2">
             <b-table sort-by.sync="name" class="small" striped hover :fields="fileTableFields" :items="fileTable">
@@ -109,12 +110,21 @@
                         if (name === file) uploaded = true
                     }
 
-                    console.log({file, name, type, size, uploaded});
+                    // console.log({file, name, type, size, uploaded});
                     // items.push({'Имя_файла':name, 'Тип':type, 'Размер':size, 'Загружен':uploaded})
                     items.push({name, type, size, uploaded})
                 }
                 return items
             },
+
+            // Это тестовая функция. Удалить, если не доделаю. Должна показывать состояние true, когда все файлы залиты.
+            uploadStatus: function () {
+                let isAllFilesUpload=true
+                for (const file of this.files) {
+                    if (!file.uploaded) isAllFilesUpload=false
+                }
+                return isAllFilesUpload
+            }
         },
 
         watch: {
@@ -259,54 +269,56 @@
                 console.log('Start uploading:', this.files.length, 'files')
                 // let divSuccess = document.getElementById("successStory");
 
-                for (let file of this.files) {
-                    console.log('Upload:', file.name)
 
-                    let canvas = document.getElementById(file.name);
-                    // let description = (canvas.dataset.description) ? canvas.dataset.description : ''
-                    // let tags = (canvas.dataset.tags) ? canvas.dataset.tags : ''
+                    for (let file of this.files) {
+                        console.log('Upload:', file.name)
 
-                    logosCollection.add({
-                        name: file.name.split('.').slice(0, -1).join('.'),
-                        description: canvas.dataset.description,
-                        tags: canvas.dataset.tags
-                    })
-                    .then(docRef => {
-                        console.log("Document written with ID: ", docRef.id);
-                        let filename = docRef.id
-
-                        // Upload pdf
-                        const storagePdfRef = storage.ref(filename+PDF_EXT).put(file);
-                        storagePdfRef.on(`state_changed`, snapshot => {
-                                this.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            }, error => {
-                                console.log('Error uploading pdf:', error.message)
-                            }, () => {
-                                console.log('Upload success:', file.name)
-                                this.filesUploaded.push(file.name)
-                            }
-                        );
-                        this.progress = 100;
-
-                        // Upload jpeg - from pdfjs canvas
                         let canvas = document.getElementById(file.name);
-                        let jpeg = canvas.toDataURL("image/jpeg", 1)
-                        // let typedArray = new Uint8Array(jpeg);
-                        let jpegName = filename + JPEG_EXT
-                        const storageJpgRef = storage.ref(jpegName)
-                        storageJpgRef.putString(jpeg, 'data_url').then(function() {
-                            console.log('Uploaded:', jpegName);
-                        });
+                        // let description = (canvas.dataset.description) ? canvas.dataset.description : ''
+                        // let tags = (canvas.dataset.tags) ? canvas.dataset.tags : ''
 
-                        let new_canvas = document.createElement("pdfCanvass");
-                        new_canvas.innerHTML = `<canvas id="${file.name}"></canvas>`;
-                        let div_for_canvases = document.getElementById("listCanvas");
-                        div_for_canvases.appendChild(new_canvas);
-                    })
-                    .catch(function(error) {
-                        console.error("Error adding document: ", error);
-                    });
-                }
+                        logosCollection.add({
+                            name: file.name.split('.').slice(0, -1).join('.'),
+                            description: canvas.dataset.description,
+                            tags: canvas.dataset.tags
+                        })
+                            .then(docRef => {
+                                console.log("Document written with ID: ", docRef.id);
+                                let filename = docRef.id
+
+                                // Upload pdf
+                                const storagePdfRef = storage.ref(filename+PDF_EXT).put(file);
+                                storagePdfRef.on(`state_changed`, snapshot => {
+                                        this.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                    }, error => {
+                                        console.log('Error uploading pdf:', error.message)
+                                    }, () => {
+                                        console.log('Upload success:', file.name)
+                                        this.filesUploaded.push(file.name)
+                                    }
+                                );
+                                this.progress = 100;
+
+                                // Upload jpeg - from pdfjs canvas
+                                let canvas = document.getElementById(file.name);
+                                let jpeg = canvas.toDataURL("image/jpeg", 1)
+                                // let typedArray = new Uint8Array(jpeg);
+                                let jpegName = filename + JPEG_EXT
+                                const storageJpgRef = storage.ref(jpegName)
+                                storageJpgRef.putString(jpeg, 'data_url').then(function() {
+                                    console.log('Uploaded:', jpegName);
+                                });
+
+                                let new_canvas = document.createElement("pdfCanvass");
+                                new_canvas.innerHTML = `<canvas id="${file.name}"></canvas>`;
+                                let div_for_canvases = document.getElementById("listCanvas");
+                                div_for_canvases.appendChild(new_canvas);
+                            })
+                            .catch(function(error) {
+                                console.error("Error adding document: ", error);
+                            });
+                    }
+
             }
         }
     }
