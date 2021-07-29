@@ -1,4 +1,4 @@
-##Znak database
+# Znak database
 
 https://znakdb.web.app
 
@@ -12,7 +12,7 @@ https://znakdb.web.app
 </td>
 <td width="20%" align="center">
   <a href="https://vuejs.org/">Vue JS</a><br><br>
-  <a href="https://vuejs.org/"><img src="https://pnglive.com/wp-content/uploads/2021/01/Vue-JS-Logo-Background-PNG-Image.png" width="256"></a>
+  <a href="https://vuejs.org/"><img src="https://it.badykov.com/assets/img/blog/thumbs/advantages-of-vuejs.png" width="256"></a>
 </td>
 <td width="10%" align="center">
   <a href="https://bootstrap-vue.org/">Bootstrap-vue</a><br><br>
