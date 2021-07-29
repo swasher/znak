@@ -3,10 +3,29 @@
 https://znakdb.web.app
 
 ## Powered by 
-![Firebase logo](!https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Firebase_Logo.svg/1280px-Firebase_Logo.svg.png)
-![Vuw logo](https://www.kindpng.com/picc/m/452-4529223_vue-js-logo-png-transparent-png.png)
-![Bootstrap-vue logo](https://bootstrap-vue.org/_nuxt/icons/icon_512x512.67aef2.png)
-![Pdfjs logo](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Pdf-js_logo.svg/1200px-Pdf-js_logo.svg.png)
+
+<table>
+<tr valign="middle">
+<td width="20%" align="center">
+  <a href="https://firebase.google.com/">Firebase</a><br><br>
+  <a href="https://firebase.google.com/"><img src="https://firebase.google.com/downloads/brand-guidelines/PNG/logo-built_black.png" width="256"></a>
+</td>
+<td width="20%" align="center">
+  <a href="https://vuejs.org/">Vue JS</a><br><br>
+  <a href="https://vuejs.org/"><img src="https://pnglive.com/wp-content/uploads/2021/01/Vue-JS-Logo-Background-PNG-Image.png" width="256"></a>
+</td>
+<td width="10%" align="center">
+  <a href="https://bootstrap-vue.org/">Bootstrap-vue</a><br><br>
+  <a href="https://bootstrap-vue.org/"><img src="https://bootstrap-vue.org/_nuxt/icons/icon_512x512.67aef2.png" width="64"></a>
+</td>
+<td width="20%" align="center">
+  <a href="https://mozilla.github.io/pdf.js/">Pdfjs</a><br><br>
+  <a href="https://mozilla.github.io/pdf.js/"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Pdf-js_logo.svg/1200px-Pdf-js_logo.svg.png" width="64"></a>
+</td>
+</tr>
+</table>
+
+
 
 TODO
 ---------------
